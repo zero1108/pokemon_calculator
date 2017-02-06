@@ -1,0 +1,127 @@
+<div class="container-fluid"> 個体値カリキュレーター (サンムーン対応)</div>
+  <br>
+  <%= form_for([:calculate, @pokemon], method: :put)do |f|%>
+    <div class="field">
+      <label>Level</label>
+      <%= f.number_field :level%>
+    </div>
+    <div class="field">
+      <label>Character</label>
+      <%=select_tag 'character_id', options_for_select(PokemonCharacter.all.map{|p_c| [p_c.name, p_c.id]})%>
+    </div>
+    <br>
+    <label>種族値</label>
+    <div class="field">      
+      <label>HP</label>
+      <%= f.number_field :hp%>
+    </div>
+    <div class="field">
+      <label>Attack</label>
+      <%= f.number_field :attack%>
+    </div>
+    <div class="field">
+      <label>Defend</label>
+      <%= f.number_field :defend%>
+    </div>
+    <div class="field">
+      <label>Sp_Attack</label>
+      <%= f.number_field :sp_attack%>
+    </div>
+    <div class="field">
+      <label>Sp_Defend</label>
+      <%= f.number_field :sp_defend%>
+    </div>
+    <div class="field">
+      <label>Speed</label>
+      <%= f.number_field :speed%>
+    </div>
+  </div>
+  <br>
+  <div name="personal_ability">
+    <label>個体値</label>
+    <div class="field">      
+      <label>HP</label>
+      <%= f.number_field :p_hp%>
+    </div>
+    <div class="field">
+      <label>Attack</label>
+      <%= f.number_field :p_attack%>
+    </div>
+    <div class="field">
+      <label>Defend</label>
+      <%= f.number_field :p_defend%>
+    </div>
+    <div class="field">
+      <label>Sp_Attack</label>
+      <%= f.number_field :p_sp_attack%>
+    </div>
+    <div class="field">
+      <label>Sp_Defend</label>
+      <%= f.number_field :p_sp_defend%>
+    </div>
+    <div class="field">
+      <label>Speed</label>
+      <%= f.number_field :p_speed%>
+    </div>
+  </div>
+  <br>
+  <div name="train_ability">
+    <label>努力値</label>
+    <div class="field">      
+      <label>HP</label>
+      <%= f.number_field :tr_hp%>
+    </div>
+    <div class="field">
+      <label>Attack</label>
+      <%= f.number_field :tr_attack%>
+    </div>
+    <div class="field">
+      <label>Defend</label>
+      <%= f.number_field :tr_defend%>
+    </div>
+    <div class="field">
+      <label>Sp_Attack</label>
+      <%= f.number_field :tr_sp_attack%>
+    </div>
+    <div class="field">
+      <label>Sp_Defend</label>
+      <%= f.number_field :tr_sp_defend%>
+    </div>
+    <div class="field">
+      <label>Speed</label>
+      <%= f.number_field :tr_speed%>
+    </div>
+  </div>
+  <br>
+  <div class="field">
+    <%= f.submit "Calculate"%>
+  </div>
+    <% end %>
+    <br>
+      <div name="train_ability">
+      <label>能力値</label>
+      <div class="field">      
+        <label>HP</label>
+        <%= @pokemon.real_hp%>
+      </div>
+      <div class="field">
+        <label>Attack</label>
+        <%= @pokemon.real_attack%>
+      </div>
+      <div class="field">
+        <label>Defend</label>
+        <%= @pokemon.real_defend%>
+      </div>
+      <div class="field">
+        <label>Sp_Attack</label>
+        <%= @pokemon.real_sp_attack%>
+      </div>
+      <div class="field">
+        <label>Sp_Defend</label>
+        <%= @pokemon.real_sp_defend%>
+      </div>
+      <div class="field">
+        <label>Speed</label>
+        <%= @pokemon.real_speed%>
+      </div>
+    </div>
