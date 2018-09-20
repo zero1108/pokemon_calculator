@@ -32,6 +32,10 @@ class Pokemon < ActiveRecord::Base
   end
 
   class << self
+    def collection
+      Pokemon.pluck(:number, :name).map{|p| {value: p[0], name: p[1]}}
+    end
+
     def sync
       thread_count = MAX_NO/THREAD_BUCKET + (MAX_NO%THREAD_BUCKET > 0 ? 1 : 0)
       thread_count.times do |index|
@@ -54,27 +58,30 @@ class Pokemon < ActiveRecord::Base
       status_part = doc.xpath('//div[@class="table layout_right"]/table/tr/td[@class="left"]')
       number = doc.xpath('//div[@class="table layout_left"]/table/tr[@class="center"]/td')[2].text.to_i
       name = doc.xpath('//div[@class="table layout_left"]/table/tr/th').children.first.text
-      hp = status_part[0].text.to_i
-      attack = status_part[1].text.to_i
-      defend = status_part[2].text.to_i
-      sp_attack = status_part[3].text.to_i
-      sp_defend = status_part[4].text.to_i
-      speed = status_part[5].text.to_i
+      hp = status_part[0].text[1..-1].to_i
+      attack = status_part[1].text[1..-1].to_i
+      defend = status_part[2].text[1..-1].to_i
+      sp_attack = status_part[3].text[1..-1].to_i
+      sp_defend = status_part[4].text[1..-1].to_i
+      speed = status_part[5].text[1..-1].to_i
 
-      avatar_url = doc.xpath('//div[@class="table layout_left"]/table/tr[@class="center"]/td/img/@src').text.gsub('//', 'http://')
-      avatar = open(avatar_url)
+      pokemon = Pokemon.find_or_initialize_by(number: number)
+      pokemon.name = name
+      pokemon.hp = hp
+      pokemon.attack = attack
+      pokemon.defend = defend
+      pokemon.sp_attack = sp_attack
+      pokemon.sp_defend = sp_defend
+      pokemon.speed = speed
 
-      pokemon = Pokemon.new({
-        number: number,
-        name: name,
-        hp: hp,
-        attack: attack,
-        defend: defend,
-        sp_attack: sp_attack,
-        sp_defend: sp_defend,
-        speed: speed
-        })
-      pokemon.icon.attach(io: avatar, filename: "#{number}.jpg")
+      if pokemon.new_record?
+        avatar_url = doc.xpath('//div[@class="table layout_left"]/table/tr[@class="center"]/td/img/@src').text.gsub('//', 'http://')
+        # avatar = open(avatar_url)
+
+        open("assets/images/pokemon_icons/#{number}.gif", "wb") do |file|
+          file<<open(avatar_url).read
+        end
+      end
       pokemon
     end
   end

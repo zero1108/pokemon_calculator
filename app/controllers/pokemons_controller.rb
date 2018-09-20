@@ -1,13 +1,14 @@
 class PokemonsController < ApplicationController
-  # before_action :set_pokemon, only: [:show]
+  before_action :set_pokemon, only: [:show]
   before_action :pokemon_params, :set_racial_ability_params, only: [:calculate]
 
-  # def show
-  #   # @pokemon = Pokemon.new
-  # end
+  def show
+    render json: @pokemon
+  end
 
   def new
     @pokemon = Pokemon.new
+    @pokemons = Pokemon.collection
   end
 
   def calculate
@@ -48,7 +49,8 @@ class PokemonsController < ApplicationController
         speed: pokemon_params[:speed],
       )
     end
-  #   def set_pokemon
-  #     @pokemon = Pokemon.find(params[:id])
-  #   end
+
+    def set_pokemon
+      @pokemon = Pokemon.find_by(number: params[:id])
+    end
 end

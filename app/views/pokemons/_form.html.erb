@@ -9,6 +9,14 @@
       <label>Character</label>
       <%=select_tag 'character_id', options_for_select(PokemonCharacter.all.map{|p_c| [p_c.name, p_c.id]})%>
     </div>
+    <div>
+      <select id="pokemons" onchange="setStatus(this);">
+        <% @pokemons.each do |pokemon|%>
+          <option value="<%=pokemon[:value]%>"><%=pokemon[:name]%></option>
+        <%end%>
+      </select>
+    </div>
+    <%= image_tag '/assets/pokemon_icons/1.gif', id: 'icon'%>
     <br>
     <label>種族値</label>
     <div class="field">      
@@ -125,3 +133,25 @@
         <%= @pokemon.real_speed%>
       </div>
     </div>
+
+<script>
+  $("#pokemons").select2();
+
+  function setStatus(pokemon) {
+    var number = pokemon.value;
+    $.ajax({
+      method: 'GET',
+      url: '/pokemons/' + number,
+      data: {},
+    }).done(function(resp){
+      var pokemon = resp;
+      $('#pokemon_hp').val(pokemon.hp);
+      $('#pokemon_attack').val(pokemon.attack);
+      $('#pokemon_defend').val(pokemon.defend);
+      $('#pokemon_sp_attack').val(pokemon.sp_attack);
+      $('#pokemon_sp_defend').val(pokemon.sp_defend);
+      $('#pokemon_speed').val(pokemon.speed);
+      $('#icon').attr('src', '/assets/pokemon_icons/'+pokemon.number+'.gif');
+    });
+  };
+</script>

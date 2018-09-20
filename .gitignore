@@ -18,3 +18,5 @@
 /storage
 /config/*.yml
 /db/schema.rb
+Gemfile.lock
+.byebug_history
