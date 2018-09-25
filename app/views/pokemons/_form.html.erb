@@ -1,157 +1,124 @@
-<div class="container-fluid"> 個体値カリキュレーター (サンムーン対応)</div>
+<div class="container"> 
+  <h2>個体値カリキュレーター (サンムーン対応)</h2>
   <br>
-  <%= form_for([:calculate, @pokemon], method: :put)do |f|%>
-    <div class="field">
+  <%= form_for(@pokemon, as: :pokemon, url: calculate_pokemons_path(@pokemon), method: :put) do |f|%>
+    <ul>
+      <% @pokemon.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+    <div class="form-group">
       <label>Level</label>
-      <%= f.number_field :level%>
+      <%= f.number_field :level, class: 'form-control level'%>
     </div>
-    <div class="field">
+    <div class="form-group">
       <label>Character</label>
-      <%=select_tag 'character_id', options_for_select(PokemonCharacter.all.map{|p_c| [p_c.name, p_c.id]})%>
+      <%=select_tag 'character_id', options_for_select(PokemonCharacter.all.map{|p_c| [p_c.name, p_c.id]}), id: 'characters'%>
     </div>
     <div>
-      <select id="pokemons" onchange="setStatus(this);">
-        <% @pokemons.each do |pokemon|%>
+      <label>Pokemon</label>
+      <select id="pokemons" onchange="setIcon(this);">
+        <% Pokemon.collection.each do |pokemon|%>
           <option value="<%=pokemon[:value]%>"><%=pokemon[:name]%></option>
-        <%end%>
+        <% end %>
       </select>
+      <%= f.hidden_field :number, value: 1%>
     </div>
     <%= image_tag '/assets/pokemon_icons/1.gif', id: 'icon'%>
     <br>
-    <label>種族値</label>
-    <div class="field">      
-      <label>HP</label>
-      <%= f.number_field :hp%>
-    </div>
-    <div class="field">
-      <label>Attack</label>
-      <%= f.number_field :attack%>
-    </div>
-    <div class="field">
-      <label>Defend</label>
-      <%= f.number_field :defend%>
-    </div>
-    <div class="field">
-      <label>Sp_Attack</label>
-      <%= f.number_field :sp_attack%>
-    </div>
-    <div class="field">
-      <label>Sp_Defend</label>
-      <%= f.number_field :sp_defend%>
-    </div>
-    <div class="field">
-      <label>Speed</label>
-      <%= f.number_field :speed%>
-    </div>
-  </div>
-  <br>
-  <div name="personal_ability">
-    <label>個体値</label>
-    <div class="field">      
-      <label>HP</label>
-      <%= f.number_field :p_hp%>
-    </div>
-    <div class="field">
-      <label>Attack</label>
-      <%= f.number_field :p_attack%>
-    </div>
-    <div class="field">
-      <label>Defend</label>
-      <%= f.number_field :p_defend%>
-    </div>
-    <div class="field">
-      <label>Sp_Attack</label>
-      <%= f.number_field :p_sp_attack%>
-    </div>
-    <div class="field">
-      <label>Sp_Defend</label>
-      <%= f.number_field :p_sp_defend%>
-    </div>
-    <div class="field">
-      <label>Speed</label>
-      <%= f.number_field :p_speed%>
-    </div>
-  </div>
-  <br>
-  <div name="train_ability">
-    <label>努力値</label>
-    <div class="field">      
-      <label>HP</label>
-      <%= f.number_field :tr_hp%>
-    </div>
-    <div class="field">
-      <label>Attack</label>
-      <%= f.number_field :tr_attack%>
-    </div>
-    <div class="field">
-      <label>Defend</label>
-      <%= f.number_field :tr_defend%>
-    </div>
-    <div class="field">
-      <label>Sp_Attack</label>
-      <%= f.number_field :tr_sp_attack%>
-    </div>
-    <div class="field">
-      <label>Sp_Defend</label>
-      <%= f.number_field :tr_sp_defend%>
-    </div>
-    <div class="field">
-      <label>Speed</label>
-      <%= f.number_field :tr_speed%>
-    </div>
-  </div>
-  <br>
-  <div class="field">
-    <%= f.submit "Calculate"%>
-  </div>
-    <% end %>
-    <br>
+    <div class="input-groups">
+      <div name="personal_ability">
+        <label>個体値</label>
+        <div class="form-group">      
+          <label>HP</label>
+          <%= f.number_field :p_hp, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Attack</label>
+          <%= f.number_field :p_attack, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Defend</label>
+          <%= f.number_field :p_defend, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Sp_Attack</label>
+          <%= f.number_field :p_sp_attack, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Sp_Defend</label>
+          <%= f.number_field :p_sp_defend, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Speed</label>
+          <%= f.number_field :p_speed, class: 'form-control'%>
+        </div>
+      </div>
       <div name="train_ability">
+        <label>努力値</label>
+        <div class="form-group">      
+          <label>HP</label>
+          <%= f.number_field :tr_hp, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Attack</label>
+          <%= f.number_field :tr_attack, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Defend</label>
+          <%= f.number_field :tr_defend, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Sp_Attack</label>
+          <%= f.number_field :tr_sp_attack, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Sp_Defend</label>
+          <%= f.number_field :tr_sp_defend, class: 'form-control'%>
+        </div>
+        <div class="form-group">
+          <label>Speed</label>
+          <%= f.number_field :tr_speed, class: 'form-control'%>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.submit "Calculate"%>
+    </div>
+  <% end %>
+    <br>
+    <div class="result">
       <label>能力値</label>
-      <div class="field">      
+      <div class="form-group">      
         <label>HP</label>
         <%= @pokemon.real_hp%>
       </div>
-      <div class="field">
+      <div class="form-group">
         <label>Attack</label>
         <%= @pokemon.real_attack%>
       </div>
-      <div class="field">
+      <div class="form-group">
         <label>Defend</label>
         <%= @pokemon.real_defend%>
       </div>
-      <div class="field">
+      <div class="form-group">
         <label>Sp_Attack</label>
         <%= @pokemon.real_sp_attack%>
       </div>
-      <div class="field">
+      <div class="form-group">
         <label>Sp_Defend</label>
         <%= @pokemon.real_sp_defend%>
       </div>
-      <div class="field">
+      <div class="form-group">
         <label>Speed</label>
         <%= @pokemon.real_speed%>
       </div>
     </div>
-
+</div>
 <script>
   $("#pokemons").select2();
-
-  function setStatus(pokemon) {
-    var number = pokemon.value;
-    $.ajax({
-      method: 'GET',
-      url: '/pokemons/' + number,
-      data: {},
-    }).done(function(resp){
-      var pokemon = resp;
-      $('#pokemon_hp').val(pokemon.hp);
-      $('#pokemon_attack').val(pokemon.attack);
-      $('#pokemon_defend').val(pokemon.defend);
-      $('#pokemon_sp_attack').val(pokemon.sp_attack);
-      $('#pokemon_sp_defend').val(pokemon.sp_defend);
-      $('#pokemon_speed').val(pokemon.speed);
-      $('#icon').attr('src', '/assets/pokemon_icons/'+pokemon.number+'.gif');
-    });
-  };
+  $("#characters").select2();
+  function setIcon(pokemon) {
+    $('#icon').attr('src', '/assets/pokemon_icons/'+pokemon.value+'.gif'); 
+   };
 </script>

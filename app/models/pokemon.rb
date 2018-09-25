@@ -1,9 +1,13 @@
 require 'open-uri'
 require 'net/http'
 class Pokemon < ActiveRecord::Base
-  attr_accessor :character, :level, :p_hp, :p_attack, :p_defend, :p_sp_attack, :p_sp_defend, :p_speed, :tr_hp, :tr_attack, :tr_defend, :tr_sp_attack, :tr_sp_defend, :tr_speed, :real_hp, :real_attack, :real_defend, :real_sp_attack, :real_sp_defend, :real_speed
+  attr_accessor :character, :level, :p_hp, :p_attack, :p_defend, :p_sp_attack, :p_sp_defend, :p_speed
+  attr_accessor :tr_hp, :tr_attack, :tr_defend, :tr_sp_attack, :tr_sp_defend, :tr_speed
+  attr_accessor :real_hp, :real_attack, :real_defend, :real_sp_attack, :real_sp_defend, :real_speed
 
   validates_uniqueness_of :number
+  validates :level, numericality: {only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 100}
+  validates :p_hp, :p_attack, :p_defend, :p_sp_attack, :p_sp_defend, :p_speed, :tr_hp, :tr_attack, :tr_defend, :tr_sp_attack, :tr_sp_defend, :tr_speed, numericality: {only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 100}
 
   DATA_HOST = 'https://yakkun.com/sm/zukan/'
   MAX_NO = 807
@@ -11,27 +15,28 @@ class Pokemon < ActiveRecord::Base
 
   has_one_attached :icon
 
-  def self.personal_ability
-    %W( hp attack defend sp_attack sp_defend speed)
-  end
-
   # 能力値＝(種族値×2＋個体値＋努力値÷4)×レベル÷100＋レベル＋10
   # 能力値＝{(種族値×2＋個体値＋努力値÷4)×レベル÷100＋5}×性格補正
-  def ability_calculate(personal_abilities, train_abilities, level, character_id)
-    abilities = []
+  def ability_calculate(level, character_id)
+
     self.level = level
-    pokemon_character = PokemonCharacter.find(character_id)
-    Pokemon.personal_ability.each do |ability|
-      if ability == "hp"
-        abilities << (self.send(ability)*2+personal_abilities[ability.to_sym]+train_abilities[ability.to_sym]/4)*level/100+level+10
-      else
-        abilities << ((self.send(ability)*2+personal_abilities[ability.to_sym]+train_abilities[ability.to_sym]/4)*level/100+5)*pokemon_character.send(ability)
+    if self.valid?
+      pokemon_character = PokemonCharacter.find(character_id)
+      Pokemon.personal_ability.each do |ability|
+        if ability == "hp"
+          self.send("real_#{ability}=", (self.send(ability)*2+self.send("p_#{ability}".to_sym)+self.send("tr_#{ability}".to_sym)/4)*level/100+level+10)
+        else
+          self.send("real_#{ability}=", ((self.send(ability)*2+self.send("p_#{ability}".to_sym)+self.send("tr_#{ability}".to_sym)/4)*level/100+5)*pokemon_character.send(ability))
+        end
       end
     end
-    abilities.map(&:to_i)
   end
 
   class << self
+    def personal_ability
+      %W( hp attack defend sp_attack sp_defend speed)
+    end
+
     def collection
       Pokemon.pluck(:number, :name).map{|p| {value: p[0], name: p[1]}}
     end

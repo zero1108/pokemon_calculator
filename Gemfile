@@ -45,5 +45,6 @@ group :development do
   gem 'spring'
 end
 
+gem 'bootstrap-sass'
 gem 'activerecord-import'
 gem "select2-rails"
